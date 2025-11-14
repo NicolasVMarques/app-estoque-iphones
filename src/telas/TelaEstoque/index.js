@@ -14,8 +14,9 @@ import Cabecalho from '../../componentes/Cabecalho';
 import ItemEstoque from '../../componentes/ItemEstoque';
 import styles from './styles';
 
-function TelaEstoque() {
-  const [estoque, setEstoque] = useState([]);
+// 2. A TelaEstoque agora recebe a prop onLogout
+function TelaEstoque({ onLogout }) {
+  const [estoque, setEstoque] = useState([]); // Começa com lista vazia
   const [modalVisivel, setModalVisivel] = useState(false);
   const [modelo, setModelo] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -33,7 +34,6 @@ function TelaEstoque() {
   }
 
   function lidarComExcluirItem(itemSelecionado) {
-    
     const novoEstoque = estoque.filter(function(item) {
       return item.id !== itemSelecionado.id;
     });
@@ -103,7 +103,9 @@ function TelaEstoque() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#2563EB" barStyle="light-content" />
-      <Cabecalho />
+      
+      <Cabecalho onLogout={onLogout} />
+
       <FlatList
         data={estoque}
         renderItem={renderizarItem}
@@ -114,7 +116,7 @@ function TelaEstoque() {
         style={styles.botaoAdicionar}
         onPress={abrirModal}
       >
-        <Text style={{color: 'white', fontSize: 30}}>+</Text>
+        <Text style={styles.botaoAdicionarTexto}>+</Text>
       </TouchableOpacity>
       
       <Modal

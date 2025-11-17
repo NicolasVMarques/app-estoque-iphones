@@ -3,31 +3,76 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'flex-start',
+    paddingTop: 140,
+    paddingHorizontal: 20,
   },
-  titulo: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 40,
+  
+  logoImagem: {
+    width: 600,
+    height: 300,
+    marginBottom: -100,
   },
+
   formContainer: {
     width: '90%',
     maxWidth: 400,
     alignItems: 'center',
   },
-  input: {
 
+  label: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    textAlign: 'left',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+
+  input: {
+    width: '100%',
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E5E7EB',
+    borderWidth: 1,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
     marginBottom: 20,
     fontSize: 16,
+  },
+
+  inputContainer: {
+    width: '100%',
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E5E7EB',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+
+  inputSenha: {
+    flex: 1,
+    paddingVertical: 15,
+    fontSize: 16,
+    color: '#1F2937',
+  },
+
+  iconeOlho: {
+    paddingLeft: 10,
+  },
+
+  botaoEntrar: {
+    width: '100%',
+    backgroundColor: '#2563EB',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 4,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -35,15 +80,6 @@ export default StyleSheet.create({
     },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
-    elevation: 4,
-  },
-  botaoEntrar: {
-    width: '100%', 
-    backgroundColor: '#2563EB',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    elevation: 4,
   },
   botaoTexto: {
     color: '#FFFFFF',

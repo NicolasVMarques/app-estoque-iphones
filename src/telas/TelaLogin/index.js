@@ -6,21 +6,24 @@ import {
   TextInput,
   TouchableOpacity,
   StatusBar,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
+
+import { Feather } from '@expo/vector-icons'; 
 import styles from './styles';
 
-function TelaLogin({ onLoginSucesso }) {
+const logoImagem = require('../../../assets/DnaiPhone.png');
 
+function TelaLogin({ onLoginSucesso }) {
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   function lidarComLogin() {
-    
     if (usuario.trim().toLowerCase() === 'pai' && senha.trim() === '123') {
       onLoginSucesso();
     } else {
-      
       Alert.alert('Login Inválido', 'Usuário ou senha incorretos.');
     }
   }
@@ -33,26 +36,54 @@ function TelaLogin({ onLoginSucesso }) {
     setSenha(texto);
   }
 
+  function alternarVisibilidadeSenha() {
+    
+    setMostrarSenha(function(estadoAnterior) {
+      return !estadoAnterior;
+    });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <Text style={styles.titulo}>Login</Text>
+      
+      <Image 
+        source={logoImagem} 
+        style={styles.logoImagem} 
+        resizeMode="contain"
+      />
 
       <View style={styles.formContainer}>
+        <Text style={styles.label}>Usuário</Text>
         <TextInput
           style={styles.input}
-          placeholder="Usuário"
+          placeholder="Digite seu usuário"
           autoCapitalize="none"
           value={usuario}
           onChangeText={atualizarUsuario}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          secureTextEntry={true}
-          value={senha}
-          onChangeText={atualizarSenha}
-        />
+        
+        <Text style={styles.label}>Senha</Text>
+        
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputSenha} 
+            placeholder="Digite sua senha"
+            
+            secureTextEntry={!mostrarSenha} 
+            value={senha}
+            onChangeText={atualizarSenha}
+          />
+          
+          <TouchableOpacity style={styles.iconeOlho} onPress={alternarVisibilidadeSenha}>
+            
+            <Feather 
+              name={mostrarSenha ? "eye" : "eye-off"} 
+              size={24} 
+              color="#6B7280" 
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           style={styles.botaoEntrar}

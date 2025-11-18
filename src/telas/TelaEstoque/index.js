@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -14,41 +14,79 @@ import Cabecalho from '../../componentes/Cabecalho';
 import ItemEstoque from '../../componentes/ItemEstoque';
 import styles from './styles';
 
-// 2. A TelaEstoque agora recebe a prop onLogout
+import { 
+  salvarProduto, 
+  listarProdutos, 
+  atualizarStatus, 
+  excluirProduto,
+} from '../../database/banco';
+
+
 function TelaEstoque({ onLogout }) {
-  const [estoque, setEstoque] = useState([]); // Começa com lista vazia
+  const [estoque, setEstoque] = useState([]);
   const [modalVisivel, setModalVisivel] = useState(false);
   const [modelo, setModelo] = useState('');
   const [descricao, setDescricao] = useState('');
+  
+  const [idParaEditar, setIdParaEditar] = useState(null);
+
+  function carregarLista() {
+    listarProdutos(function(listaDoBanco) {
+      setEstoque(listaDoBanco);
+    });
+  }
+
+  useEffect(function() {
+    carregarLista();
+  }, []);
 
   function lidarComMudarStatus(itemSelecionado) {
     const novoStatus = itemSelecionado.status === 'Em Estoque' ? 'Vendido' : 'Em Estoque';
-    
-    const novoEstoque = estoque.map(function(item) {
-      if (item.id === itemSelecionado.id) {
-        return { ...item, status: novoStatus };
-      }
-      return item;
+    atualizarStatus(itemSelecionado.id, novoStatus, function() {
+      carregarLista();
     });
-    setEstoque(novoEstoque);
   }
 
   function lidarComExcluirItem(itemSelecionado) {
-    const novoEstoque = estoque.filter(function(item) {
-      return item.id !== itemSelecionado.id;
-    });
-    setEstoque(novoEstoque);
+    
+    Alert.alert(
+      "Excluir Item",
+      "Tem certeza que deseja excluir este iPhone?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Excluir", 
+          style: "destructive",
+          onPress: () => {
+             excluirProduto(itemSelecionado.id, function() {
+              carregarLista();
+            });
+          }
+        }
+      ]
+    );
+  }
+
+  function prepararEdicao(item) {
+    setModelo(item.modelo);
+    setDescricao(item.descricao);
+    setIdParaEditar(item.id);
   }
 
   function abrirMenuDeAcoes(item) {
     const acaoStatus = item.status === 'Em Estoque' ? 'Marcar como Vendido' : 'Marcar como Em Estoque';
     Alert.alert(
       item.modelo,
-      'O que você gostaria de fazer?',
+      'O que gostaria de fazer?',
       [
         {
           text: acaoStatus,
           onPress: function() { lidarComMudarStatus(item) },
+        },
+        
+        {
+          text: 'Editar',
+          onPress: function() { prepararEdicao(item) },
         },
         {
           text: 'Excluir',
@@ -67,42 +105,57 @@ function TelaEstoque({ onLogout }) {
     return <ItemEstoque item={item} onPress={abrirMenuDeAcoes} />;
   }
 
-  function lidarComAdicionarItem() {
+
+  function lidarComSalvar() {
     if (modelo.trim() === '' || descricao.trim() === '') {
-      alert('Por favor, preencha todos os campos.');
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos.');
       return;
     }
-    const novoItem = {
-      id: Date.now().toString(),
-      modelo: modelo,
-      descricao: descricao,
-      status: 'Em Estoque',
-    };
-    
-    setEstoque(function(estoqueAnterior) {
-      return [novoItem, ...estoqueAnterior];
-    });
 
-    setModelo('');
-    setDescricao('');
-    setModalVisivel(false);
+    if (idParaEditar) {
+      
+      import('../../database/banco').then(banco => {
+        
+        if (banco.atualizarProduto) {
+            banco.atualizarProduto(idParaEditar, modelo, descricao, function() {
+                fecharModal();
+                carregarLista();
+            });
+        } else {
+            Alert.alert("Erro", "Função de atualizar não encontrada no banco.js");
+        }
+      });
+
+    } else {
+      
+      salvarProduto(modelo, descricao, function() {
+        fecharModal();
+        carregarLista();
+      });
+    }
   }
 
   function abrirModal() {
+    setIdParaEditar(null); 
+    setModelo('');
+    setDescricao('');
     setModalVisivel(true);
   }
 
   function fecharModal() {
     setModalVisivel(false);
+    setModelo('');
+    setDescricao('');
+    setIdParaEditar(null);
   }
 
   function extrairChave(item) {
-    return item.id;
+    return item.id.toString();
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#2563EB" barStyle="light-content" />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       
       <Cabecalho onLogout={onLogout} />
 
@@ -111,6 +164,11 @@ function TelaEstoque({ onLogout }) {
         renderItem={renderizarItem}
         keyExtractor={extrairChave}
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+        ListEmptyComponent={
+            <Text style={{textAlign: 'center', marginTop: 50, color: '#999'}}>
+                Nenhum iPhone cadastrado.
+            </Text>
+        }
       />
       <TouchableOpacity
         style={styles.botaoAdicionar}
@@ -127,11 +185,26 @@ function TelaEstoque({ onLogout }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitulo}>Adicionar Novo iPhone</Text>
-            <TextInput style={styles.input} placeholder="Modelo (ex: iPhone 13)" value={modelo} onChangeText={setModelo} />
-            <TextInput style={styles.input} placeholder="Descrição (ex: 128GB, Azul)" value={descricao} onChangeText={setDescricao} />
+    
+            <Text style={styles.modalTitulo}>
+                {idParaEditar ? 'Editar iPhone' : 'Adicionar Novo iPhone'}
+            </Text>
+            
+            <TextInput 
+                style={styles.input} 
+                placeholder="Modelo (ex: iPhone 13)" 
+                value={modelo} 
+                onChangeText={setModelo} 
+            />
+            <TextInput 
+                style={styles.input} 
+                placeholder="Descrição (ex: 128GB, Azul)" 
+                value={descricao} 
+                onChangeText={setDescricao} 
+            />
+            
             <View style={styles.botoesModalContainer}>
-              <TouchableOpacity style={styles.botaoSalvar} onPress={lidarComAdicionarItem}>
+              <TouchableOpacity style={styles.botaoSalvar} onPress={lidarComSalvar}>
                 <Text style={styles.botaoTexto}>Salvar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.botaoCancelar} onPress={fecharModal}>

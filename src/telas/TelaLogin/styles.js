@@ -68,7 +68,7 @@ export default StyleSheet.create({
 
   botaoEntrar: {
     width: '100%',
-    backgroundColor: '#2563EB',
+    backgroundColor: "rgba(31, 41, 55, 1)",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',

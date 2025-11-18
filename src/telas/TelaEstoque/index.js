@@ -71,33 +71,35 @@ function TelaEstoque({ onLogout }) {
     setModelo(item.modelo);
     setDescricao(item.descricao);
     setIdParaEditar(item.id);
+    setModalVisivel(true);
   }
 
   function abrirMenuDeAcoes(item) {
     const acaoStatus = item.status === 'Em Estoque' ? 'Marcar como Vendido' : 'Marcar como Em Estoque';
+    
     Alert.alert(
       item.modelo,
       'O que gostaria de fazer?',
       [
+        // Botão 1
         {
           text: acaoStatus,
           onPress: function() { lidarComMudarStatus(item) },
         },
-        
+        // Botão 2
         {
           text: 'Editar',
           onPress: function() { prepararEdicao(item) },
         },
+        // Botão 3
         {
           text: 'Excluir',
           onPress: function() { lidarComExcluirItem(item) },
           style: 'destructive',
         },
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-      ]
+        
+      ],
+      { cancelable: true }
     );
   }
 

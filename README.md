@@ -2,15 +2,13 @@
 
 Este é um aplicativo em React Native, desenvolvido com Expo, para auxiliar no gerenciamento de estoque de uma loja de iPhones.
 
-Com este projeto consegui praticar os fundamentos do React Native, incluindo componentes, estado, modais, persistência de dados e lógica de CRUD (Criar, Ler, Atualizar e Apagar).
-
 ##  Funcionalidades
 
 O aplicativo permite:
 
-* **Adicionar** novos iPhones ao estoque (Entrada).
+* **Adicionar** novos iPhones ao estoque.
 
-* **Listar** todos os iPhones cadastrados.
+* **Editar** todos os iPhones cadastrados.
 
 * **Atualizar** o status de um item (marcar como "Vendido" ou "Em Estoque").
 

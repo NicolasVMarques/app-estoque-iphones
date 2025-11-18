@@ -81,17 +81,17 @@ function TelaEstoque({ onLogout }) {
       item.modelo,
       'O que gostaria de fazer?',
       [
-        // Botão 1
+        
         {
           text: acaoStatus,
           onPress: function() { lidarComMudarStatus(item) },
         },
-        // Botão 2
+        
         {
           text: 'Editar',
           onPress: function() { prepararEdicao(item) },
         },
-        // Botão 3
+        
         {
           text: 'Excluir',
           onPress: function() { lidarComExcluirItem(item) },

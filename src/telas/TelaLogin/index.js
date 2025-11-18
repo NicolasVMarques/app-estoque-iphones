@@ -21,7 +21,7 @@ function TelaLogin({ onLoginSucesso }) {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   function lidarComLogin() {
-    if (usuario.trim().toLowerCase() === 'pai' && senha.trim() === '123') {
+    if (usuario.trim().toLowerCase() === 'dna' && senha.trim() === '123') {
       onLoginSucesso();
     } else {
       Alert.alert('Login Inválido', 'Usuário ou senha incorretos.');
